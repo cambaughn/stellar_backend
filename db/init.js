@@ -45,6 +45,9 @@ const User = sequelize.define('user', {
   bio: {
     type: Sequelize.STRING
   },
+  profile_photo: {
+    type: Sequelize.STRING
+  },
   admin: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
