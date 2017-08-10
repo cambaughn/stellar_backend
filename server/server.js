@@ -61,6 +61,20 @@ app.get('/users', function (request, response) {
   })
 })
 
+app.post('/users/update', function (request, response) {
+  let { id, name, email, bio } = request.body;
+  let updates = { name, email, bio };
+  console.log('ID => ', id);
+
+  models.User.findOne({ where: { id: id }})
+  .then(user => {
+    user.update(updates)
+      .then(user => {
+        response.send({message: user})
+      })
+  })
+})
+
 app.post('/user_profile', (request, response) => {
 
   let { userId, currentUserId } = request.body;
