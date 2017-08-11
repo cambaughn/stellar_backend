@@ -36,6 +36,9 @@ const User = sequelize.define('user', {
   name: {
     type: Sequelize.STRING
   },
+  username: {
+    type: Sequelize.STRING
+  },
   email: {
     type: Sequelize.STRING
   },
@@ -107,11 +110,27 @@ sequelize.sync({ force: true, match: /_test$/ }).then(() => {
   // Table created
   console.log('All tables created')
 
-  User.create({ name: 'Luke Skywalker', email: 'luke@gmail.com', bio: 'I am a Jedi, like my father before me' })
+  User.create({
+    name: 'Luke Skywalker',
+    username: 'luke',
+    email: 'luke@gmail.com',
+    bio: 'I am a Jedi, like my father before me'
+  })
 
-  User.create({ name: 'Obi-Wan Kenobi', email: 'obi-wan@gmail.com', bio: 'You must do what you feel is right, of course.' })
+  User.create({
+    name: 'Obi-Wan Kenobi',
+    username: 'obi_wan',
+    email: 'obi-wan@gmail.com',
+    bio: 'You must do what you feel is right, of course.'
+  })
 
-  User.create({ name: "Anakin Skywalker", email: "anakin@gmail.com", password: "$2a$10$/STx6KrERzjZb3wAaI0yqujRmtURSo2QMoRYW8k0VFoIen1xm7R2G", bio: 'This is where the fun begins.' })
+  User.create({
+    name: "Anakin Skywalker",
+    username: 'ani', 
+    email: "anakin@gmail.com",
+    password: "$2a$10$/STx6KrERzjZb3wAaI0yqujRmtURSo2QMoRYW8k0VFoIen1xm7R2G",
+    bio: 'This is where the fun begins.'
+  })
   // password: ihatesand
 
   Question.create({
