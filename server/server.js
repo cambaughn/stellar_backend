@@ -312,6 +312,32 @@ app.post('/actions/new', (request, response) => {
 })
 
 
+// SEARCH routes
+
+app.get('/search/:searchTerm', (request, response) => {
+  let searchTerm = request.params.searchTerm;
+  console.log(searchTerm)
+  models.User.findAll({
+    where: {
+      name: {
+        $or: {
+          $like: `%${searchTerm}%`
+        }
+      }
+    }
+  })
+  .then(users => {
+    response.send(users);
+  })
+  .error(error => {
+    response.send({message: 'There was an error'}, error)
+  })
+
+
+
+})
+
+
 // app.listen(1337, function () {
 //   console.log('Example app listening on port 1337!')
 // })
