@@ -56,7 +56,7 @@ app.use(session({
 app.get('/users', function (request, response) {
   sess = sess || request.session;
   console.log('SESSION on all users route =====> ', sess);
-  models.User.findAll({ attributes: ['name', 'email', 'id']}).then(users => {
+  models.User.findAll({ attributes: ['name', 'email', 'id', 'username']}).then(users => {
     response.send(users);
   })
 })
