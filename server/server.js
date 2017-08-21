@@ -13,10 +13,11 @@ var multer  = require('multer')
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/')
+    console.log('FILE => ', file);
+    cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '.mov')
+    cb(null, file.fieldname + '-' + Date.now() + '.mov');
   }
 })
 
@@ -82,7 +83,7 @@ app.post('/user_profile', (request, response) => {
   // Return the specific user
   models.User.findOne({
     where: { id: userId },
-    attributes: ['name', 'email', 'bio', 'id']
+    attributes: ['name', 'email', 'bio', 'id', 'username']
   })
     .then(user => {
       if (userId !== currentUserId) {
@@ -105,7 +106,7 @@ app.post('/user_profile', (request, response) => {
 // This route is now filtering server-side to only return answered questions
 app.get('/questions', function (request, response) {
   models.Question.findAll({
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', where: { path: { $ne: null } }, attributes: ['id', 'path'] } ],
+    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
     attributes: ['text', 'id']
   })
     .then(questions => {
@@ -118,7 +119,7 @@ app.get('/questions/:userId', (request, response) => {
   console.log(request.params.userId)
   models.Question.findAll({
     where: { answererId: request.params.userId},
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', where: { path: { $ne: null } }, attributes: ['id', 'path'] } ],
+    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
     attributes: ['text', 'id'],
     order: [['updatedAt', 'DESC']]
   })
@@ -132,7 +133,7 @@ app.get('/questions/:userId', (request, response) => {
 app.post('/questions/current_user', (request, response) => {
   models.Question.findAll({
     where: { answererId: request.body.userId},
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', attributes: ['id', 'path'] } ],
+    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', attributes: ['id', 'path', 'createdAt'] } ],
     attributes: ['text', 'id'],
     order: [['updatedAt', 'DESC']]
   })
@@ -316,14 +317,23 @@ app.post('/actions/new', (request, response) => {
 
 app.get('/search/:searchTerm', (request, response) => {
   let searchTerm = request.params.searchTerm;
-  console.log(searchTerm)
+
   models.User.findAll({
     where: {
-      name: {
-        $or: {
+      $or: {
+
+        name: {
+          $or: {
+            $like: `%${searchTerm}%`
+          }
+        },
+
+        username: {
           $like: `%${searchTerm}%`
         }
+
       }
+
     }
   })
   .then(users => {

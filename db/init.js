@@ -119,7 +119,7 @@ sequelize.sync({ force: true, match: /_test$/ }).then(() => {
 
   User.create({
     name: 'Obi-Wan Kenobi',
-    username: 'obi_wan',
+    username: 'yoda',
     email: 'obi-wan@gmail.com',
     bio: 'You must do what you feel is right, of course.'
   })
