@@ -161,7 +161,7 @@ app.post('/questions/new', (request, response) => {
 
 // ANSWER routes
 
-app.post('/answers/new', upload.single('answer'), (request, response) => {
+app.post('/answer/new', upload.single('answer'), (request, response) => {
 
   console.log(request.body.questionId);
 
@@ -174,6 +174,20 @@ app.post('/answers/new', upload.single('answer'), (request, response) => {
       response.send(error)
     })
 })
+
+
+app.post('/answer/view', (request, response) => {
+  let { answerId } = request.body;
+
+  models.View.create({ answerId })
+  .then(view => {
+    response.send({ message: `Received view.`, view })
+  })
+  .catch(error => {
+    response.send({ message: 'There was an error', error })
+  })
+})
+
 
 app.get('/answer/:answerPath', (request, response) => {
   console.log(request.params.answerPath);
@@ -194,17 +208,6 @@ app.get('/answer/:answerPath', (request, response) => {
 
 })
 
-app.post('/answer/view', (request, response) => {
-  let { answerId } = request.body;
-
-  models.View.create({ answerId })
-  .then(view => {
-    response.send({ message: `Received view.`, view })
-  })
-  .catch(error => {
-    response.send({ message: 'There was an error', error })
-  })
-})
 
 
 // LOGIN & SIGNUP routes
