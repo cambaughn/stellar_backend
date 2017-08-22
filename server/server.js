@@ -106,7 +106,7 @@ app.post('/user_profile', (request, response) => {
 // This route is now filtering server-side to only return answered questions
 app.get('/questions', function (request, response) {
   models.Question.findAll({
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
+    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
     attributes: ['text', 'id']
   })
     .then(questions => {
@@ -119,7 +119,7 @@ app.get('/questions/:userId', (request, response) => {
   console.log(request.params.userId)
   models.Question.findAll({
     where: { answererId: request.params.userId},
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
+    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
     attributes: ['text', 'id'],
     order: [['updatedAt', 'DESC']]
   })
@@ -133,7 +133,7 @@ app.get('/questions/:userId', (request, response) => {
 app.post('/questions/current_user', (request, response) => {
   models.Question.findAll({
     where: { answererId: request.body.userId},
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'Answers', attributes: ['id', 'path', 'createdAt'] } ],
+    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', attributes: ['id', 'path', 'createdAt'] } ],
     attributes: ['text', 'id'],
     order: [['updatedAt', 'DESC']]
   })
@@ -192,6 +192,18 @@ app.get('/answer/:answerPath', (request, response) => {
     }
   });
 
+})
+
+app.post('/answer/view', (request, response) => {
+  let { answerId } = request.body;
+
+  models.View.create({ answerId })
+  .then(view => {
+    response.send({ message: `Received view.`, view })
+  })
+  .catch(error => {
+    response.send({ message: 'There was an error', error })
+  })
 })
 
 
@@ -293,24 +305,6 @@ function checkFollowing(followerId, followingId, callback) {
     })
 }
 
-
-// ACTION logging routes
-
-app.post('/actions/new', (request, response) => {
-  let { userId, type } = request.body;
-
-  if (userId && type) {
-    models.Action.create({ userId, type })
-    .then(action => {
-      response.send({ message: `Received action.`, type })
-    })
-    .catch(error => {
-      response.send({ message: 'There was an error', error })
-    })
-  } else {
-    response.send({ message: 'There was an error' })
-  }
-})
 
 
 // SEARCH routes

@@ -85,22 +85,21 @@ const Answer = sequelize.define('answer', {
 
 
 Answer.belongsTo(Question, { as: 'question' });
-Question.hasMany(Answer, {as: 'Answers'})
+Question.hasMany(Answer, {as: 'answers'})
 
 const Like = sequelize.define('like', {
 });
 
 Like.belongsTo(User, { as: 'user'});
 Like.belongsTo(Answer, { as: 'answer'});
-Like.belongsTo(Question, { as: 'question'});
+User.hasMany(Like, {as: 'likes'});
+Answer.hasMany(Like, {as: 'likes'});
 
-
-const Action = sequelize.define('action', {
-  type: Sequelize.STRING,
+const View = sequelize.define('view', {
 });
 
-Action.belongsTo(User, { as: 'user'});
-User.hasMany(Action, {as: 'actions'});
+View.belongsTo(Answer, { as: 'answer'});
+Answer.hasMany(View, {as: 'views'});
 
 // ============================ Setup + Test ============================
 
@@ -188,4 +187,4 @@ module.exports.Question = Question;
 module.exports.Answer = Answer;
 module.exports.Follower = Follower;
 module.exports.Like = Like;
-module.exports.Action = Action;
+module.exports.View = View;
