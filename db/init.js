@@ -101,6 +101,12 @@ const View = sequelize.define('view', {
 View.belongsTo(Answer, { as: 'answer'});
 Answer.hasMany(View, {as: 'views'});
 
+const Hashtag = sequelize.define('hashtag', {
+});
+
+Hashtag.belongsTo(Question, { as: 'hashtag'});
+Question.hasMany(Hashtag, {as: 'hashtags'});
+
 // ============================ Setup + Test ============================
 
 // force: true will drop the table if it already exists
