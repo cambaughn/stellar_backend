@@ -163,8 +163,6 @@ app.post('/questions/new', (request, response) => {
 
 app.post('/answer/new', upload.single('answer'), (request, response) => {
 
-  console.log(request.body.questionId);
-
    models.Answer.create({ path: request.file.path, questionId: request.body.questionId })
     .then(answer => {
       response.send({message: 'GOT VIDEO'})
@@ -178,6 +176,8 @@ app.post('/answer/new', upload.single('answer'), (request, response) => {
 
 app.post('/answer/view', (request, response) => {
   let { answerId } = request.body;
+
+  console.log()
 
   models.View.create({ answerId })
   .then(view => {

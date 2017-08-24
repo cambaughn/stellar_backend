@@ -8,12 +8,20 @@ This is the backend of stellar. Repositories and instructions for running the fr
 
 ## Getting Started
 
-`mysql.server start` to start the mysql server
+### Installation
 
-`mysql -u root -p` to access the mysql terminal
+1. From the root of this directory, run `yarn` or `npm install` to install packages
 
-`nodemon server/server.js` to start express server on port 1337
+### Running the app
 
-`redis-server` to start the redis server
+1. `mysql.server start` to start the mysql server
 
-`redis-cli` to monitor and check values in redis ( `KEYS *` to check keys, `GET key` to see that entry)
+2. `mysql -u root -p` to access the mysql terminal
+
+3. `nodemon server/server.js` to start express server on port 1337
+
+> Currently not using the redis server. 4 and 5 not necessary.
+
+4. `redis-server` to start the redis server
+
+5. `redis-cli` to monitor and check values in redis ( `KEYS *` to check keys, `GET key` to see that entry)
