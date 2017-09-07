@@ -1,7 +1,10 @@
 // This line requires the .env to be able to access the variables there
 require('dotenv').config();
 
-// This code will drop the existing db and create a new one - use with caution
+// The code in this document will drop the existing db and create a new one - use with caution
+
+// Need the model definition from ./models.js
+const models = require('./models.js');
 
 const Sequelize = require('sequelize');
 
@@ -16,8 +19,12 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   },
 });
 
-
-console.log('logging env variable! => ', process.env.DB_HOST)
+// Check if environment variables are available
+if (process.env.DB_HOST) {
+  console.log('============ Environment variables loaded ============');
+} else {
+  console.error('============ Environment variables not available ============')
+}
 
 
 sequelize
@@ -30,82 +37,6 @@ sequelize
   });
 
 
-// ============================ MODELS ============================
-
-const User = sequelize.define('user', {
-  name: {
-    type: Sequelize.STRING
-  },
-  username: {
-    type: Sequelize.STRING
-  },
-  email: {
-    type: Sequelize.STRING
-  },
-  password: {
-    type: Sequelize.STRING
-  },
-  bio: {
-    type: Sequelize.STRING
-  },
-  profile_photo: {
-    type: Sequelize.STRING
-  },
-  admin: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  }
-});
-
-// User.hasMany(User, {as: 'Followers'})
-
-const Follower = sequelize.define('follower', {
-});
-
-Follower.belongsTo(User, { as: 'follower'});
-Follower.belongsTo(User, { as: 'following'});
-
-
-const Question = sequelize.define('question', {
-  text: {
-    type: Sequelize.STRING,
-  },
-});
-
-Question.belongsTo(User, { as: 'asker'});
-Question.belongsTo(User, { as: 'answerer'});
-
-
-const Answer = sequelize.define('answer', {
-  path: {
-    type: Sequelize.STRING,
-  },
-});
-
-
-Answer.belongsTo(Question, { as: 'question' });
-Question.hasMany(Answer, {as: 'answers'})
-
-const Like = sequelize.define('like', {
-});
-
-Like.belongsTo(User, { as: 'user'});
-Like.belongsTo(Answer, { as: 'answer'});
-User.hasMany(Like, {as: 'likes'});
-Answer.hasMany(Like, {as: 'likes'});
-
-const View = sequelize.define('view', {
-});
-
-View.belongsTo(Answer, { as: 'answer'});
-Answer.hasMany(View, {as: 'views'});
-
-const Hashtag = sequelize.define('hashtag', {
-});
-
-Hashtag.belongsTo(Question, { as: 'hashtag'});
-Question.hasMany(Hashtag, {as: 'hashtags'});
 
 // ============================ Setup + Test ============================
 
@@ -113,72 +44,72 @@ Question.hasMany(Hashtag, {as: 'hashtags'});
 // the match regex will only do so if the db contains _test, will not do so in production
 sequelize.sync({ force: true, match: /_test$/ }).then(() => {
   // Table created
-  console.log('All tables created')
+  console.log('All tables created');
 
-  User.create({
+  models.User.create({
     name: 'Luke Skywalker',
     username: 'luke',
     email: 'luke@gmail.com',
     bio: 'I am a Jedi, like my father before me'
   })
 
-  User.create({
+  models.User.create({
     name: 'Obi-Wan Kenobi',
     username: 'obiwan',
     email: 'obi-wan@gmail.com',
     bio: 'You must do what you feel is right, of course.'
   })
 
-  User.create({
+  models.User.create({
     name: "Anakin Skywalker",
     username: 'ani',
     email: "anakin@gmail.com",
-    password: "$2a$10$/STx6KrERzjZb3wAaI0yqujRmtURSo2QMoRYW8k0VFoIen1xm7R2G",
+    password: "$2a$10$/STx6KrERzjZb3wAaI0yqujRmtURSo2models.QMoRYW8k0VFoIen1xm7R2G",
     bio: 'This is where the fun begins.'
   })
   // password: ihatesand
 
-  Question.create({
+  models.Question.create({
     text: 'Use the force, Luke.',
     askerId: 2,
     answererId: 1
   })
 
-  Question.create({
+  models.Question.create({
     text: 'No, I am your father.',
     askerId: 3,
     answererId: 1
   })
 
-  Question.create({
+  models.Question.create({
     text: 'I have a bad feeling about this.',
     askerId: 2,
     answererId: 3
   })
 
-  Question.create({
+  models.Question.create({
     text: 'Obi-Wan, may the force be with you.',
     askerId: 3,
     answererId: 2
   })
 
-  Question.create({
+  models.Question.create({
     text: 'Do you know anything about an Obi-Wan Kenobi?',
     askerId: 1,
     answererId: 2
   })
 
-  Follower.create({
+  models.Follower.create({
     followerId: 2,
     followingId: 1
   })
 
-  Answer.create({
+  models.Answer.create({
     path: 'answer-1500086355570.mp4',
     questionId: 1
   })
 
-  Answer.create({
+  models.Answer.create({
     path: 'answer-1500086355570.mp4',
     questionId: 5
   })
@@ -186,11 +117,4 @@ sequelize.sync({ force: true, match: /_test$/ }).then(() => {
 });
 
 
-
 module.exports.sequelize = sequelize;
-module.exports.User = User;
-module.exports.Question = Question;
-module.exports.Answer = Answer;
-module.exports.Follower = Follower;
-module.exports.Like = Like;
-module.exports.View = View;

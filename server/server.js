@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 let client  = redis.createClient();
 let fs = require('fs');
 
-var multer  = require('multer')
+var multer  = require('multer');
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -27,7 +27,7 @@ let http = require('http');
 let https = require('https');
 const app = express();
 
-const models = require('../db/init.js');
+const models = require('../db/models.js');
 let sess;
 
 app.use(bodyParser.json({limit: '50mb'})); // for parsing application/json
@@ -134,7 +134,7 @@ app.post('/questions/current_user', (request, response) => {
   models.Question.findAll({
     where: { answererId: request.body.userId},
     include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', attributes: ['id', 'path', 'createdAt'] } ],
-    attributes: ['text', 'id'],
+    attributes: ['text', 'id', 'createdAt'],
     order: [['updatedAt', 'DESC']]
   })
     .then(questions => {
