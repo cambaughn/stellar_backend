@@ -6,6 +6,14 @@ require('dotenv').config();
 // Need the model definition from ./models.js
 const models = require('./models.js');
 
+// Check if environment variables are available
+if (process.env.DB_HOST) {
+  console.log('============ Environment variables loaded ============');
+} else {
+  console.error('============ Environment variables not available ============')
+}
+
+
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -19,12 +27,6 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   },
 });
 
-// Check if environment variables are available
-if (process.env.DB_HOST) {
-  console.log('============ Environment variables loaded ============');
-} else {
-  console.error('============ Environment variables not available ============')
-}
 
 
 sequelize

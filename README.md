@@ -25,3 +25,68 @@ This is the backend of stellar. Repositories and instructions for running the fr
 4. `redis-server` to start the redis server
 
 5. `redis-cli` to monitor and check values in redis ( `KEYS *` to check keys, `GET key` to see that entry)
+
+
+### Access the remote server
+
+1. `ssh root@[IP address]`
+
+
+## API Documentation
+
+### Questions
+
+> Questions are the text of the question, along with the relationship to the users
+
+#### Get All Answered Questions
+
+Method: __GET__
+
+Path: `/questions`
+
+#### Get Answered Questions for Specific User
+
+> Used for other user's profiles
+
+Method: __GET__
+
+Path: `/questions/:userId`
+
+#### Get All Questions for Current User
+
+> Used for current user's profile
+
+Method: __GET__
+
+Path: `/questions/current_user`
+
+#### Post New Question
+
+Method: __POST__
+
+Path: `/questions/new`
+
+Expects: `{ text, askerId, answererId }`
+
+
+### Answers
+
+> Answers are the video responses to questions
+
+#### Get Individual Answer
+
+> Used for video playback in full-screen modal
+
+Method: __GET__
+
+Path: `/answer/:answerId`
+
+#### Post New Answer
+
+> Used to upload video files from device
+
+Method: __POST__
+
+Path: `/answer/new`
+
+Expects: `{ path, questionId }`
