@@ -31,7 +31,7 @@ This is the backend of stellar. Repositories and instructions for running the fr
 
 1. `ssh root@[IP address]`
 
-<br>
+<br><br>
 
 ## API Documentation
 
@@ -69,6 +69,7 @@ Path: `/questions/new`
 
 Expects: `{ text, askerId, answererId }`
 
+<br>
 
 ### Answers
 
