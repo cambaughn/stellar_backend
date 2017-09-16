@@ -28,7 +28,7 @@ let https = require('https');
 const app = express();
 
 const models = require('../db/models');
-const questions = require('./questions');
+const questions = require('./routes/questions');
 let sess;
 
 app.use(bodyParser.json({limit: '50mb'})); // for parsing application/json

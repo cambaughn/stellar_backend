@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 
-const models = require('../db/models');
+const models = require('../../db/models');
 
 
 // QUESTION routes
