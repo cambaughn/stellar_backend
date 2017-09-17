@@ -28,7 +28,13 @@ let https = require('https');
 const app = express();
 
 const models = require('../db/models');
+
+// Import routes
+const user = require('./routes/user');
 const questions = require('./routes/questions');
+const search = require('./routes/search');
+
+const checkFollowing = require('./util/checkFollowing');
 let sess;
 
 app.use(bodyParser.json({limit: '50mb'})); // for parsing application/json
@@ -53,56 +59,10 @@ app.use(session({
 }))
 
 
-// USER routes
-app.get('/users', function (request, response) {
-  sess = sess || request.session;
-  console.log('SESSION on all users route =====> ', sess);
-  models.User.findAll({ attributes: ['name', 'email', 'id', 'username']}).then(users => {
-    response.send(users);
-  })
-})
-
-app.post('/users/update', function (request, response) {
-  let { id, name, email, bio } = request.body;
-  let updates = { name, email, bio };
-  console.log('ID => ', id);
-
-  models.User.findOne({ where: { id: id }})
-  .then(user => {
-    user.update(updates)
-      .then(user => {
-        response.send({message: user})
-      })
-  })
-})
-
-app.post('/user_profile', (request, response) => {
-
-  let { userId, currentUserId } = request.body;
-
-  // Return the specific user
-  models.User.findOne({
-    where: { id: userId },
-    attributes: ['name', 'email', 'bio', 'id', 'username']
-  })
-    .then(user => {
-      if (userId !== currentUserId) {
-        checkFollowing(currentUserId, userId, isFollowing => {
-          let updatedUser = Object.assign({}, user.toJSON(), {following: isFollowing});
-          response.send(updatedUser);
-        })
-      } else {
-        response.send(user);
-      }
-    })
-    .catch(error => {
-      response.send(error);
-    })
-})
-
-// QUESTION routes
-
-app.use('/questions', questions)
+// ROUTES
+app.use('/user', user);
+app.use('/questions', questions);
+app.use('/search', search);
 
 
 // ANSWER routes
@@ -242,53 +202,7 @@ app.post('/followers/is_following', (request, response) => {
   checkFollowing(followerId, followingId, (isFollowing) => response.send(isFollowing))
 })
 
-function checkFollowing(followerId, followingId, callback) {
-  models.Follower.findOne({
-    where: { followerId, followingId }
-  })
-    .then(follow => {
-      callback(!!follow);
-    })
-    .catch(error => {
-      callback(error);
-    })
-}
 
-
-
-// SEARCH routes
-
-app.get('/search/:searchTerm', (request, response) => {
-  let searchTerm = request.params.searchTerm;
-
-  models.User.findAll({
-    where: {
-      $or: {
-
-        name: {
-          $or: {
-            $like: `%${searchTerm}%`
-          }
-        },
-
-        username: {
-          $like: `%${searchTerm}%`
-        }
-
-      }
-
-    }
-  })
-  .then(users => {
-    response.send(users);
-  })
-  .error(error => {
-    response.send({message: 'There was an error'}, error)
-  })
-
-
-
-})
 
 
 // app.listen(1337, function () {

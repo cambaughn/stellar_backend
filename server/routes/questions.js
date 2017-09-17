@@ -4,12 +4,14 @@ let router = express.Router();
 const models = require('../../db/models');
 
 
-// QUESTION routes
-
-// This route is now filtering server-side to only return answered questions
+// This route is filtering server-side to only return answered questions
 router.get('/', function (request, response) {
   models.Question.findAll({
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
+    include: [
+      { model: models.User, as: 'asker'},
+      { model: models.User, as: 'answerer'},
+      { model: models.Answer, as: 'answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] }
+  ],
     attributes: ['text', 'id']
   })
     .then(questions => {
@@ -18,12 +20,16 @@ router.get('/', function (request, response) {
 })
 
 
-// Get other people's questions - filter on backend to only send questions with answers
+// Get a specific user's questions - filter on backend to only send questions with answers
+// Do not use for the current user
 router.get('/:userId', (request, response) => {
-  console.log(request.params.userId)
   models.Question.findAll({
     where: { answererId: request.params.userId},
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] } ],
+    include: [
+      { model: models.User, as: 'asker'},
+      { model: models.User, as: 'answerer'},
+      { model: models.Answer, as: 'answers', where: { path: { $ne: null } }, attributes: ['id', 'path', 'createdAt'] }
+    ],
     attributes: ['text', 'id'],
     order: [['updatedAt', 'DESC']]
   })
@@ -32,12 +38,16 @@ router.get('/:userId', (request, response) => {
     })
 })
 
-// Get the current user's questions - get all questions and filter on front end
 
+// Get the current user's questions - get all questions and filter on front end
 router.post('/current_user', (request, response) => {
   models.Question.findAll({
     where: { answererId: request.body.userId},
-    include: [ { model: models.User, as: 'asker'}, { model: models.User, as: 'answerer'}, { model: models.Answer, as: 'answers', attributes: ['id', 'path', 'createdAt'] } ],
+    include: [
+      { model: models.User, as: 'asker'},
+      { model: models.User, as: 'answerer'},
+      { model: models.Answer, as: 'answers', attributes: ['id', 'path', 'createdAt'] }
+    ],
     attributes: ['text', 'id', 'createdAt'],
     order: [['updatedAt', 'DESC']]
   })
@@ -47,8 +57,7 @@ router.post('/current_user', (request, response) => {
 })
 
 
-// POST Question
-
+// Post new question
 router.post('/new', (request, response) => {
   let { text, askerId, answererId } = request.body;
 
@@ -58,7 +67,7 @@ router.post('/new', (request, response) => {
         response.send(question);
       })
   } else {
-    response.send('Error! Missing fields. Please try again.')
+    response.send({ message: 'Error! Missing fields. Please try again.' })
   }
 })
 
