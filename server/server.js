@@ -34,8 +34,8 @@ const user = require('./routes/user');
 const questions = require('./routes/questions');
 const search = require('./routes/search');
 const login = require('./routes/login');
+const followers = require('./routes/followers');
 
-const checkFollowing = require('./util/checkFollowing');
 let sess;
 
 app.use(bodyParser.json({limit: '50mb'})); // for parsing application/json
@@ -65,6 +65,7 @@ app.use('/user', user);
 app.use('/questions', questions);
 app.use('/search', search);
 app.use('/login', login);
+app.use('/followers', followers);
 
 
 // ANSWER routes
@@ -115,96 +116,6 @@ app.get('/answer/:answerPath', (request, response) => {
   });
 
 })
-
-
-
-// LOGIN & SIGNUP routes
-/*
-app.post('/login', (request, response) => {
-  let { email, password } = request.body;
-
-  models.User.findOne({ where: { email: email } })
-    .then(user => {
-      bcrypt.compare(password, user.password, function(error, result) {
-        if (result) { // Passwords match
-          // Session code not working currently
-          // sess = request.session;
-          // sess.user = user.name;
-          // sess.userId = user.id;
-          response.statusCode = 200;
-          response.send({ name: user.name, bio: user.bio, email: user.email, id: user.id });
-        } else { // Passwords do not match
-          console.log(error)
-          response.statusCode = 404;
-          response.send('Incorrect password');
-        }
-      });
-    })
-    .catch(error => { // Error finding the user record in the database
-      response.statusCode = 404;
-      response.send(error);
-    })
-
-});
-
-
-
-app.post('/signup', (request, response) => {
-  let { name, email, password } = request.body;
-
-  bcrypt.hash(request.body.password, 10, function(error, hash) {
-
-    if (error) {
-      console.error(error);
-    } else {
-
-      models.User.findOrCreate({ where: { email: email }, defaults: { name: name, password: hash}})
-        .spread((user, created) => {
-          response.statusCode = 201;
-          response.send({ id: user.id, name: user.name, email: user.email, id: user.id, created: created });
-        })
-        .catch(error => {
-          console.error(error);
-          response.statusCode = 500;
-          response.send(error);
-        })
-    }
-  });
-})
-
-
-*/
-
-// FOLLOWER routes
-app.post('/followers/new', (request, response) => {
-  let { followerId, followingId } = request.body;
-
-  if (followerId && followingId) {
-    models.Follower.findOrCreate({
-      where: { followerId, followingId },
-      attributes: ['followerId', 'followingId']
-    })
-      .spread((follow, created) => {
-        response.send(follow);
-      })
-      .catch(error => {
-        response.send(error);
-      })
-  } else {
-    response.send('Error! Missing fields.')
-  }
-})
-
-
-app.post('/followers/is_following', (request, response) => {
-  let { followerId, followingId } = request.body;
-
-  console.log('FINDING FOLLOW => ', request.body)
-
-  checkFollowing(followerId, followingId, (isFollowing) => response.send(isFollowing))
-})
-
-
 
 
 // app.listen(1337, function () {
