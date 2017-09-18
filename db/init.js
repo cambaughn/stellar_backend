@@ -71,6 +71,16 @@ sequelize.sync({ force: true, match: /_test$/ }).then(() => {
   })
   // password: ihatesand
 
+  models.User.create({
+    name: 'Poe Dameron',
+    email: 'poepilot@gmail.com',
+    password: '$2a$10$Xb3lUO1vbvSBrp6PtlpPPOlOlzu0p53lh6rE//RmsYVc9Ea7kQb2K',
+    username: 'poe',
+    bio: 'You need a pilot.'
+  })
+  // password: heckofapilot
+
+
   models.Question.create({
     text: 'Use the force, Luke.',
     askerId: 2,

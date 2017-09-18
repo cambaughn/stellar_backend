@@ -33,6 +33,7 @@ const models = require('../db/models');
 const user = require('./routes/user');
 const questions = require('./routes/questions');
 const search = require('./routes/search');
+const login = require('./routes/login');
 
 const checkFollowing = require('./util/checkFollowing');
 let sess;
@@ -63,6 +64,7 @@ app.use(session({
 app.use('/user', user);
 app.use('/questions', questions);
 app.use('/search', search);
+app.use('/login', login);
 
 
 // ANSWER routes
@@ -117,7 +119,7 @@ app.get('/answer/:answerPath', (request, response) => {
 
 
 // LOGIN & SIGNUP routes
-
+/*
 app.post('/login', (request, response) => {
   let { email, password } = request.body;
 
@@ -125,10 +127,10 @@ app.post('/login', (request, response) => {
     .then(user => {
       bcrypt.compare(password, user.password, function(error, result) {
         if (result) { // Passwords match
-          sess = request.session;
-          sess.user = user.name;
-          sess.userId = user.id;
-          console.log('SESSION on login =====> ', sess);
+          // Session code not working currently
+          // sess = request.session;
+          // sess.user = user.name;
+          // sess.userId = user.id;
           response.statusCode = 200;
           response.send({ name: user.name, bio: user.bio, email: user.email, id: user.id });
         } else { // Passwords do not match
@@ -159,7 +161,7 @@ app.post('/signup', (request, response) => {
       models.User.findOrCreate({ where: { email: email }, defaults: { name: name, password: hash}})
         .spread((user, created) => {
           response.statusCode = 201;
-          response.send({ id: user.id, name: user.name, email: user.email, id: user.id });
+          response.send({ id: user.id, name: user.name, email: user.email, id: user.id, created: created });
         })
         .catch(error => {
           console.error(error);
@@ -171,7 +173,7 @@ app.post('/signup', (request, response) => {
 })
 
 
-
+*/
 
 // FOLLOWER routes
 app.post('/followers/new', (request, response) => {
