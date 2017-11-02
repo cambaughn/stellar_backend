@@ -56,7 +56,7 @@ app.use(session({
   store: new RedisStore({ host: 'localhost', port: 6379, client: client}),
   cookie: { maxAge: 60 * 60 * 1000 },
   resave: false, // don't save session if unmodified
-  // saveUninitialized: false, // don't create session until something stored
+  saveUninictialized: false, // don't create session until something stored
 }))
 
 
